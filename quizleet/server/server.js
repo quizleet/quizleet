@@ -1,17 +1,32 @@
-import express from 'express'
+import express from "express";
+import apiRouter from "./routes/api.js";
 
 
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('test response')
-})
+app.use(express.json());
+app.use("/api", apiRouter);
 
-app.listen(port, ()=> {
-  console.log(`Listening on port ${port}...`)
-})
+// Global error handler
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: "Express error handler caught an unknown middlware error.",
+    status: 500,
+    message: { err: "An error occured" },
+  };
+  // Use default err mashed with changes from passed in err
+  const errorObj = Object.assign(defaultErr, err);
+  console.log(errorObj.log);
+  return res.status(errorObj.status).send(errorObj.message);
+});
 
+// Listen for port
+app.listen(port, () => {
+  console.log(`Listening on port ${port}...`);
+});
+
+export default app;
 
 // const express = require('express');
 // const cors = require('cors');

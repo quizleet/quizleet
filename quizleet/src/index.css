@@ -50,12 +50,26 @@ body {
   height: 100vh;
 }
 
+.codeDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+}
+
 .textbox {
   width: 40vw;
   height: 50vh;
 }
+.buttons {
+  margin-top: 10px;
+}
 .button{
-  align-items:flex-end;
+  width: 130px;
+  height: 50px;
+  margin: 20px;
+  background-color: #ffffff;
+  color: #000;
 }
 
 .favoriteSidebar {

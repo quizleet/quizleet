@@ -4,6 +4,7 @@ import "../../index.css";
 function SideBar({ onLinkClick, data }) {
   const [problemsArr, setProblemsArr] = useState([]);
   const [favoritesArr, setFavoritesArr] = useState([]);
+  const [showFavsArr, setShowFavsArr] = useState(false);
   const [problems, setProblems] = useState({
     Easy: [],
     Medium: [],
@@ -74,6 +75,7 @@ function SideBar({ onLinkClick, data }) {
           <h3>{difficulty}</h3>
           {problems[difficulty].map((problem, idx) => {
             if (problem.favorite) {
+              setShowFavsArr(true);
               return (
                 <div
                   key={idx}
@@ -88,13 +90,14 @@ function SideBar({ onLinkClick, data }) {
         </div>
       );
     });
-    setFavoritesArr(favsArr)
+    setFavoritesArr([...favsArr]);
   };
 
   useEffect(() => {
     setObjs();
     problemList();
   }, [data]);
+  console.log("favs arr", favoritesArr, problemsArr);
 
   return (
     <>
@@ -104,8 +107,8 @@ function SideBar({ onLinkClick, data }) {
       </div>
 
       <div className="favoriteSidebar">
-        Favorite
-        <div>{favoritesArr}</div>
+        <h3>Favorites</h3>
+        <div>{showFavsArr ? favoritesArr : ""}</div>
       </div>
     </>
   );

@@ -20,11 +20,56 @@ function App() {
       // for loop and find first easy object in data array and set to current problem and iframe source
       for (let i = 0; i < dataBase.length; i++) {
         if (dataBase[i].difficulty === "Easy") {
+          console.log(dataBase[i])
           setIframeSource(dataBase[i]["description"]);
           setCurrentProblem(dataBase[i]);
           break;
         }
       }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  async function saveData() {
+    const passingObj = {
+      name: currentProblem.name,
+      user_rating: currentProblem.user_rating,
+      history: currentProblem.history,
+      newCode: currentProblem.newCode
+    };
+
+    try {
+      const response = await fetch("http://localhost:3000/api/save", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(passingObj)
+      });
+      const dataBase = await response.json();
+      
+
+      
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  const editFavorite = async() => {
+    const newObj = Object.assign({}, currentProblem)
+    newObj.favorite = !currentProblem.favorite
+    setCurrentProblem(newObj)
+    console.log('---------------',currentProblem)
+    const passObj = {
+      name: newObj.name,
+      favorite: newObj.favorite
+    }
+     try {
+      const response = await fetch("http://localhost:3000/api/favorite", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(passObj)
+      });
+      const dataBase = await response.json();
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -42,7 +87,7 @@ function App() {
       {/* <div class="container">  */}
       <Title />
       <div className="container">
-        <Display iframeSource={iframeSource} />
+        <Display iframeSource={iframeSource} fetchData={fetchData} currentProblem={currentProblem} editFavorite={editFavorite}/>
         <SideBar data={data} onLinkClick={handleLinkClick} />
       </div>
       {/* </div>

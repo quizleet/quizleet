@@ -19,12 +19,16 @@ controller.getProblems = (req, res, next) => {
 
 controller.save = async(req, res, next) => {
   const {name, user_rating, history, newCode} = req.body;
-  
+  console.log('req.body', JSON.stringify(req.body.newCode));
+
   const historyArr = await JSON.parse(history)
-  historyArr.unshift(newCode)
-  console.log('Array.isArray:', Array.isArray(historyArr), "historyArr:", historyArr)
+  const finalCode = newCode.replaceAll("'", "''")
+  historyArr.unshift(finalCode)
+
+  // console.log('Array.isArray:', Array.isArray(historyArr), "historyArr:", historyArr)
   // console.log(newHistoryArr)
   const stringifyArr = JSON.stringify(historyArr)
+  console.log('stringify arr', stringifyArr)
 
   const queryStr = `UPDATE problems SET user_rating = '${user_rating}', history = '${stringifyArr}' WHERE name = '${name}';`
   try {

@@ -1,81 +1,114 @@
-import React, { useState, useEffect } from 'react';
-import '../../index.css'
+import React, { useState, useEffect } from "react";
+import "../../index.css";
 
-function SideBar({ onLinkClick }) {
-//   const [count, setCount] = useState(0)
+function SideBar({ onLinkClick, data }) {
+  const [problemsArr, setProblemsArr] = useState([]);
+  const [favoritesArr, setFavoritesArr] = useState([]);
+  const [problems, setProblems] = useState({
+    Easy: [],
+    Medium: [],
+    Hard: [],
+  });
+  const [links, setLinks] = useState({
+    Easy: [],
+    Medium: [],
+    Hard: [],
+  });
 
-// const fetchData = async () => {
-//   const response = await fetch("http://localhost:3000/api");
+  function setObjs() {
+    const tempProblems = {
+      Easy: [],
+      Medium: [],
+      Hard: [],
+    };
 
-//   if (response.status === 200) {
-//     const body = await response.json();
-//     console.log('BODY:', body);
-//   }
-// };
-
-// fetchData();
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://localhost:3000/api");
-        const dataBase = await response.json();
-        console.log("This is our database ", dataBase);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+    const tempLinks = {
+      Easy: [],
+      Medium: [],
+      Hard: [],
+    };
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].difficulty === "Easy") {
+        problems.Easy.push(data[i].name);
+        links.Easy.push(data[i].description);
+      } else if (data[i].difficulty === "Medium") {
+        problems.Medium.push(data[i].name);
+        links.Medium.push(data[i].description);
+      } else if (data[i].difficulty === "Hard") {
+        problems.Hard.push(data[i].name);
+        links.Hard.push(data[i].description);
       }
     }
-    
-    fetchData();
-  }, []);
+    setProblems(tempProblems);
+    setLinks(tempLinks);
+  }
 
-const diffProblems = {
-  Easy: ['Two-Sum','palindrome','3-sum'],
-  Medium: ['add-two','palindrome','3-sum'], 
-  Hard: ['Two-Sum','palindrome','3-sum']
-}
+  const handleLinkClick = (link) => {
+    onLinkClick(link);
+  };
 
+  const problemList = () => {
+    // Map over the problems array and return a div for each element
+    const array = Object.keys(problems).map((difficulty, index) => {
+      return (
+        <div key={index}>
+          {" "}
+          <h3>{difficulty}</h3>
+          {problems[difficulty].map((problem, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleLinkClick(links[difficulty][idx])}
+              className="problem-link"
+            >
+              {problem}
+            </div>
+          ))}
+        </div>
+      );
+    });
+    setProblemsArr([...array]);
+    const favsArr = Object.keys(problems).map((difficulty, index) => {
+      return (
+        <div key={index}>
+          {" "}
+          <h3>{difficulty}</h3>
+          {problems[difficulty].map((problem, idx) => {
+            if (problem.favorite) {
+              return (
+                <div
+                  key={idx}
+                  onClick={() => handleLinkClick(links[difficulty][idx])}
+                  className="problem-link"
+                >
+                  {problem}
+                </div>
+              );
+            }
+          })}
+        </div>
+      );
+    });
+    setFavoritesArr(favsArr)
+  };
 
-const links = {
-  Easy: ['https://leetcode.com/problems/two-sum/description/','https://leetcode.com/problems/valid-palindrome/description/','https://leetcode.com/problems/3sum/description/'],
-  Medium: ['https://leetcode.com/problems/add-two-numbers/description/'],
-  Hard:[]
-};
+  useEffect(() => {
+    setObjs();
+    problemList();
+  }, [data]);
 
-const handleLinkClick = (link) => {
-  onLinkClick(link);
-};
-
-const problemList = () => {
-  // Map over the problems array and return a div for each element
-  return Object.keys(diffProblems).map((difficulty, index) => {
-    return ( <div key={index}> <h3>{difficulty}</h3>
-    {diffProblems[difficulty].map((problem, idx) => (
-        <div key={idx} onClick={() => handleLinkClick(links[difficulty][idx])} className="problem-link">
-        {problem}
-      </div>
-  ))}
-    </div> 
-    )
-  })
-};
   return (
     <>
+      <div className="difficultySidebar">
+        <h3>Difficulty</h3>
+        {problemsArr}
+      </div>
 
-
- <div  className = 'difficultySidebar'>
-  <h3>Difficulty</h3>
- {problemList()}
-  </div>
-
-  <div  className = 'favoriteSidebar'>
-  Favorite
-  <div>Two-Sum</div>
-  </div>
-
-
+      <div className="favoriteSidebar">
+        Favorite
+        <div>{favoritesArr}</div>
+      </div>
     </>
-  )
+  );
 }
 
-export default SideBar
+export default SideBar;

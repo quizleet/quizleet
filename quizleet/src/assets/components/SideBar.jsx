@@ -1,14 +1,40 @@
-// import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import '../../index.css'
 
 function SideBar({ onLinkClick }) {
 //   const [count, setCount] = useState(0)
+
+// const fetchData = async () => {
+//   const response = await fetch("http://localhost:3000/api");
+
+//   if (response.status === 200) {
+//     const body = await response.json();
+//     console.log('BODY:', body);
+//   }
+// };
+
+// fetchData();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://localhost:3000/api");
+        const dataBase = await response.json();
+        console.log("This is our database ", dataBase);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    
+    fetchData();
+  }, []);
 
 const diffProblems = {
   Easy: ['Two-Sum','palindrome','3-sum'],
   Medium: ['add-two','palindrome','3-sum'], 
   Hard: ['Two-Sum','palindrome','3-sum']
 }
+
 
 const links = {
   Easy: ['https://leetcode.com/problems/two-sum/description/','https://leetcode.com/problems/valid-palindrome/description/','https://leetcode.com/problems/3sum/description/'],
@@ -53,7 +79,3 @@ const problemList = () => {
 }
 
 export default SideBar
-
-
-
-

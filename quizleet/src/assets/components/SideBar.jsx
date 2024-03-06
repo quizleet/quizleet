@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../../index.css";
 
-function SideBar({ onLinkClick, data }) {
+function SideBar({ onLinkClick, data, fetchedData }) {
+  console.log('in sidebar', data)
   const [problemsArr, setProblemsArr] = useState([]);
   const [favoritesArr, setFavoritesArr] = useState([]);
   const [problems, setProblems] = useState({
@@ -73,7 +74,7 @@ function SideBar({ onLinkClick, data }) {
           {" "}
           <h3>{difficulty}</h3>
           {problems[difficulty].map((problem, idx) => {
-            if (problem.favorite) {
+            if (data[idx].favorite) {
               return (
                 <div
                   key={idx}
@@ -94,18 +95,39 @@ function SideBar({ onLinkClick, data }) {
   useEffect(() => {
     setObjs();
     problemList();
-  }, [data]);
+  }, [data, fetchedData]);
+
+  const favs = []
+
+  for (let obj of fetchedData){
+    if (obj.favorite){
+      favs.push(
+        <div
+        id="spacing"
+          onClick={() => handleLinkClick(obj.description)}
+          className="problem-link"
+        >
+          {obj.name}
+        </div>
+      );
+    }
+  }
 
   return (
     <>
       <div className="difficultySidebar">
-        <h3>Difficulty</h3>
+        <h2>
+          {" "}
+          <u>Difficulty</u>
+        </h2>
         {problemsArr}
       </div>
 
       <div className="favoriteSidebar">
-        Favorite
-        <div>{favoritesArr}</div>
+        <h2>
+          <u>Favorites</u>
+        </h2>
+        <div>{favs}</div>
       </div>
     </>
   );

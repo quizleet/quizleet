@@ -1,25 +1,51 @@
-import { useState } from 'react'
-import './index.css'
-import Display from './assets/components/Display.jsx'
-import Title from './assets/components/Title.jsx'
-import SideBar from './assets/components/SideBar.jsx'
-
+import React, { useState, useEffect } from "react";
+import "./index.css";
+import Display from "./assets/components/Display.jsx";
+import Title from "./assets/components/Title.jsx";
+import SideBar from "./assets/components/SideBar.jsx";
 
 function App() {
-  const [iframeSource, setIframeSource] = useState('https://leetcode.com/problems/two-sum/description/');
+  const [iframeSource, setIframeSource] = useState("");
+  const [data, setData] = useState([]);
+  const [currentProblem, setCurrentProblem] = useState({});
+
+  async function fetchData() {
+    try {
+      const response = await fetch("http://localhost:3000/api");
+      const dataBase = await response.json();
+      console.log("database", dataBase);
+      setData(dataBase);
+
+      // ideally we would want to do the problems "Easy,Medium,Hard" obj state in this main app component for a reason like this, instead we will have to do 
+      // for loop and find first easy object in data array and set to current problem and iframe source
+      for (let i = 0; i < dataBase.length; i++) {
+        if (dataBase[i].difficulty === "Easy") {
+          setIframeSource(dataBase[i]["description"]);
+          setCurrentProblem(dataBase[i]);
+          break;
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleLinkClick = (link) => {
     setIframeSource(link); // Update iframe source
   };
   return (
     <>
- {/* <div class="container">  */}
- < Title />
- <div className = 'container'> 
- <Display iframeSource={iframeSource} />
- <SideBar onLinkClick={handleLinkClick} />
- </div>
- {/* </div>
+      {/* <div class="container">  */}
+      <Title />
+      <div className="container">
+        <Display iframeSource={iframeSource} />
+        <SideBar data={data} onLinkClick={handleLinkClick} />
+      </div>
+      {/* </div>
  <div className='container'>
 
  <div  className = 'difficultySidebar'>
@@ -34,10 +60,8 @@ function App() {
 <iframe src="http://csbin.io/" width="400vw" height="100%"></iframe>
 </div>
  </div> */}
-
-
     </>
-  )
+  );
 }
 
-export default App
+export default App;
